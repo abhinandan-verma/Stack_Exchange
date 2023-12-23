@@ -2,17 +2,17 @@ package com.example.stackexchange;
 
 import static android.content.Intent.EXTRA_COMPONENT_NAME;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
-import android.view.Window;
+import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.Objects;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,7 +31,7 @@ public class QuestionDetailsActivity extends AppCompatActivity implements Callba
     public final String EXTRA_QUESTION_ID = "EXTRA_QUESTION_ID";
 
     private TextView textQuestionBody;
-    private StackOverFlowAPI api;
+    private StackOverFlowAPI stackOverFlowAPI;
     private String questionId;
     private Call<SingleQuestionResponseSchema> call;
 
@@ -39,6 +39,7 @@ public class QuestionDetailsActivity extends AppCompatActivity implements Callba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question_details);
+
         textQuestionBody = findViewById(R.id.text_question_body);
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -46,17 +47,16 @@ public class QuestionDetailsActivity extends AppCompatActivity implements Callba
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        api = retrofit.create(StackOverFlowAPI.class);
-        questionId  = Objects.requireNonNull(getIntent().getExtras()).getString(EXTRA_QUESTION_ID);
+        stackOverFlowAPI = retrofit.create(StackOverFlowAPI.class);
+        questionId  = getIntent().getExtras().getString(EXTRA_QUESTION_ID);
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        call = api.questionDetails(questionId);
+        call = stackOverFlowAPI.questionDetails(questionId);
         call.enqueue(this);
-
     }
 
     @Override
@@ -68,23 +68,30 @@ public class QuestionDetailsActivity extends AppCompatActivity implements Callba
     }
 
     @Override
-    public void onResponse(Call<SingleQuestionResponseSchema> call, Response<SingleQuestionResponseSchema> response) {
+    public void onResponse(@NonNull Call<SingleQuestionResponseSchema> call, Response<SingleQuestionResponseSchema> response) {
         SingleQuestionResponseSchema questionResponseSchema;
 
         if(response.isSuccessful() && (questionResponseSchema = response.body()) != null){
-            String questionBody = questionResponseSchema.getQuestions().getBody();
+            String questionBody = questionResponseSchema.getQuestions().body();
             textQuestionBody.setText(Html.fromHtml(questionBody,Html.FROM_HTML_MODE_LEGACY));
         }else {
+            Toast.makeText(this, "Response Failed "+response.message(), Toast.LENGTH_SHORT).show();
+            Log.d("FAILED RESPONSE","Code: "+response.code()+"failed message "+response.message());
+
             onFailure(call,null);
         }
     }
 
     @Override
-    public void onFailure(Call<SingleQuestionResponseSchema> call, Throwable t) {
+    public void onFailure(@NonNull Call<SingleQuestionResponseSchema> call, Throwable t) {
+//        Toast.makeText(this, "Request Failed "+ call.request(), Toast.LENGTH_SHORT).show();
+//        Log.d("Responce Failed",call.request().toString());
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .add(ServerErrorDialogFragment.newInstance(),null)
                 .commitAllowingStateLoss();
+
+
     }
 }
 

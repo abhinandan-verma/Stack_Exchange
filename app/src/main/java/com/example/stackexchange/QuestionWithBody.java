@@ -2,32 +2,22 @@ package com.example.stackexchange;
 
 import com.google.gson.annotations.SerializedName;
 
-public class QuestionWithBody {
-    @SerializedName("title")
-    private final String title;
-
-    @SerializedName("question_id")
-    private  final String id;
-
-    @SerializedName("body")
-    private final String body;
-
-    public String getBody() {
+public record QuestionWithBody(@SerializedName("title") String title,
+                               @SerializedName("question_id") String id,
+                               @SerializedName("body") String body) {
+    @Override
+    public String body() {
         return body;
     }
 
-    public String getTitle() {
+    @Override
+    public String title() {
         return title;
     }
 
-    public String getId() {
+    @Override
+    public String id() {
         return id;
-    }
-
-    public QuestionWithBody(String title, String id, String body) {
-        this.title = title;
-        this.id = id;
-        this.body = body;
     }
 
 
