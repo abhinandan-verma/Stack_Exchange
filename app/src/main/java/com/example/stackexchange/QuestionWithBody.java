@@ -11,14 +11,7 @@ public record QuestionWithBody(@SerializedName("title") String title,
     }
 
     @Override
-    public String title() {
-        return title;
-    }
-
-    @Override
     public String id() {
         return id;
     }
-
-
 }

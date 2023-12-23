@@ -2,6 +2,7 @@ package com.example.stackexchange;
 
 import static android.content.Intent.EXTRA_COMPONENT_NAME;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,7 +31,7 @@ public class QuestionDetailsActivity extends AppCompatActivity implements Callba
         context.startActivity(i);
     }
 
-    public final String EXTRA_QUESTION_ID = "EXTRA_QUESTION_ID";
+    public final String EXTRA_QUESTION_ID = EXTRA_COMPONENT_NAME;
 
     private TextView textQuestionBody;
     private StackOverFlowAPI stackOverFlowAPI;
@@ -48,7 +51,7 @@ public class QuestionDetailsActivity extends AppCompatActivity implements Callba
                 .build();
 
         stackOverFlowAPI = retrofit.create(StackOverFlowAPI.class);
-        questionId  = getIntent().getExtras().getString(EXTRA_QUESTION_ID);
+        questionId  = Objects.requireNonNull(getIntent().getExtras()).getString(EXTRA_QUESTION_ID);
 
     }
 
@@ -67,17 +70,20 @@ public class QuestionDetailsActivity extends AppCompatActivity implements Callba
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onResponse(@NonNull Call<SingleQuestionResponseSchema> call, Response<SingleQuestionResponseSchema> response) {
         SingleQuestionResponseSchema questionResponseSchema;
 
         if(response.isSuccessful() && (questionResponseSchema = response.body()) != null){
             String questionBody = questionResponseSchema.getQuestions().body();
-            textQuestionBody.setText(Html.fromHtml(questionBody,Html.FROM_HTML_MODE_LEGACY));
+            textQuestionBody.setText(questionId +" <-- Question Id\n\n"+Html.fromHtml(questionBody,Html.FROM_HTML_MODE_LEGACY).toString().trim());
+
+
         }else {
             Toast.makeText(this, "Response Failed "+response.message(), Toast.LENGTH_SHORT).show();
             Log.d("FAILED RESPONSE","Code: "+response.code()+"failed message "+response.message());
-
+            textQuestionBody.setText(questionId.trim());
             onFailure(call,null);
         }
     }

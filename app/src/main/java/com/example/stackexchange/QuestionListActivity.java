@@ -46,6 +46,7 @@ private Call<QuestionListResponseSchema> schemaCall;
                Log.d("TAG",question.getQuestion_id());
                QuestionDetailsActivity.start(QuestionListActivity.this, question.getQuestion_id());
            }
+
        });
         recyclerView.setAdapter(questionAdapter);
 
@@ -96,6 +97,7 @@ private Call<QuestionListResponseSchema> schemaCall;
 
     private interface OnQuestionClickListener{
         void onQuestionClicked(Question question);
+
     }
 
     private static class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.QuestionHolder>{
