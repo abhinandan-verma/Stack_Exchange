@@ -9,7 +9,7 @@
     android:scrollbarAlwaysDrawHorizontalTrack="true"
     android:scrollbarSize="10sp"
     android:scrollbarStyle="insideOverlay"
-    tools:context=".QuestionDetailsActivity">
+    tools:context=".detailsquestion.QuestionDetailsActivity">
 
     <TextView
         android:id="@+id/text_question_body"
