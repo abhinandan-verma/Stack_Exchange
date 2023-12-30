@@ -5,8 +5,6 @@ import com.example.stackexchange.questionlist.ObservableMVC;
 
 public interface QuestionDetailsViewMVC extends ObservableMVC<QuestionDetailsViewMVC.Listener> {
     void bindQuestion(QuestionWithBody question);
-    interface Listener{
-
-    }
+    interface Listener{ }
 }
 

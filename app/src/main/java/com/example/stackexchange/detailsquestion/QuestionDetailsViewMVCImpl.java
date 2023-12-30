@@ -24,12 +24,12 @@ implements QuestionDetailsViewMVC{
     @Override
     public void bindQuestion(QuestionWithBody question) {
         String questionBody = question.body();
-        textQuestionBody.setText(question.id() +" <-- Question Id\n\n"
-                + Html.fromHtml(questionBody,Html.FROM_HTML_MODE_LEGACY).toString().trim());
+        textQuestionBody.setText(Html.fromHtml(questionBody,Html.FROM_HTML_MODE_LEGACY));
     }
+
 
     @Override
     public void unregisterListener(Listener listener) {
-
+        
     }
 }

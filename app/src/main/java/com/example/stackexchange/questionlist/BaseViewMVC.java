@@ -24,12 +24,12 @@ implements ObservableMVC<ListenerType>{
     }
 
     protected Context getContext(){
-        return rootView.getContext();
+        return getRootView().getContext();
     }
     protected String getString(@StringRes int id){
         return getContext().getString(id);
     }
-    protected String getString(@StringRes int id,Object...formatArgs){
+    protected String getString(@StringRes int id,Object... formatArgs){
         return getContext().getString(id,formatArgs);
     }
 }

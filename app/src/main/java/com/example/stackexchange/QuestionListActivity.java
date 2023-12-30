@@ -31,8 +31,7 @@ private QuestionListViewMVC mViewMVC;
         mViewMVC = new QuestionListViewMVCImpl(LayoutInflater.from(this),null);
         setContentView(mViewMVC.getRootView());
 
-
-       /*  Retrofit Configuration */
+        /*  Retrofit Configuration */
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
@@ -45,7 +44,7 @@ private QuestionListViewMVC mViewMVC;
     protected void onStart() {
         super.onStart();
         mViewMVC.registerListener(this);
-        schemaCall = stackOverFlowAPI.lastActiveQuestions(20);
+        schemaCall = stackOverFlowAPI.lastActiveQuestions(30);
         schemaCall.enqueue(this);
     }
 
@@ -69,7 +68,7 @@ private QuestionListViewMVC mViewMVC;
     }
 
     @Override
-    public void onFailure(Call<QuestionListResponseSchema> call, Throwable t) {
+    public void onFailure(@NonNull Call<QuestionListResponseSchema> call, @NonNull Throwable t) {
 
         QuestionListResponseSchema responseSchema;
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -81,6 +80,6 @@ private QuestionListViewMVC mViewMVC;
 
     @Override
     public void onQuestionClicked(Question question) {
-        QuestionDetailsActivity.start(QuestionListActivity.this,question.getQuestion_id());
+        QuestionDetailsActivity.start(QuestionListActivity.this, question.getQuestion_id());
     }
 }

@@ -1,7 +1,5 @@
 package com.example.stackexchange.detailsquestion;
 
-import static android.content.Intent.EXTRA_COMPONENT_NAME;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -28,13 +26,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class QuestionDetailsActivity extends AppCompatActivity
         implements Callback<SingleQuestionResponseSchema>, QuestionDetailsViewMVC.Listener {
 
+    public static final String EXTRA_QUESTION_ID = "EXTRA_QUESTION_ID";
     public static void start(Context context, String questionId){
         Intent i = new Intent(context, QuestionDetailsActivity.class);
-        i.putExtra(EXTRA_COMPONENT_NAME,questionId);
+        i.putExtra(EXTRA_QUESTION_ID,questionId);
         context.startActivity(i);
     }
-
-    public final String EXTRA_QUESTION_ID = EXTRA_COMPONENT_NAME;
 
     private StackOverFlowAPI stackOverFlowAPI;
     private String questionId;
@@ -44,7 +41,7 @@ public class QuestionDetailsActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       detailsViewMVC = new QuestionDetailsViewMVCImpl(LayoutInflater.from(this),null);
+        detailsViewMVC = new QuestionDetailsViewMVCImpl(LayoutInflater.from(this),null);
         setContentView(detailsViewMVC.getRootView());
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -60,7 +57,7 @@ public class QuestionDetailsActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-       detailsViewMVC.registerListener(this);
+        detailsViewMVC.registerListener(this);
         call = stackOverFlowAPI.questionDetails(questionId);
         call.enqueue(this);
     }
@@ -81,7 +78,7 @@ public class QuestionDetailsActivity extends AppCompatActivity
 
         if(response.isSuccessful() && (questionResponseSchema = response.body()) != null){
             String questionBody = questionResponseSchema.getQuestions().body();
-          detailsViewMVC.bindQuestion  (questionResponseSchema.getQuestions());
+          detailsViewMVC.bindQuestion (questionResponseSchema.getQuestions());
         }else {
             onFailure(call,null);
         }
@@ -90,7 +87,7 @@ public class QuestionDetailsActivity extends AppCompatActivity
     @Override
     public void onFailure(@NonNull Call<SingleQuestionResponseSchema> call, Throwable t) {
 //        Toast.makeText(this, "Request Failed "+ call.request(), Toast.LENGTH_SHORT).show();
-//        Log.d("Responce Failed",call.request().toString());
+//        Log.d("Response Failed",call.request().toString());
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .add(ServerErrorDialogFragment.newInstance(),null)

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,20 +21,27 @@ import java.util.List;
 public class QuestionListViewMVCImpl extends BaseViewMVC<QuestionListViewMVC.Listener>
 implements QuestionListViewMVC {
 
-    private final QuestionAdapter questionAdapter;
+    private  QuestionAdapter questionAdapter;
 
 
     public QuestionListViewMVCImpl(LayoutInflater inflater, ViewGroup container) {
         setRootView(inflater.inflate(R.layout.layout_question, container, false));
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(container.getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        questionAdapter = new QuestionAdapter(question -> {
-            for (Listener listener : getListeners()) {
-                listener.onQuestionClicked(question);
-            }
-        });
+//        questionAdapter = new QuestionAdapter(question -> {
+//            for (Listener listener : getListeners()) {
+//                listener.onQuestionClicked(question);
+//            }
+//
+//        });
+ //       questionAdapter = new QuestionAdapter(new OnQuestionClickListener() {
+//            @Override
+//            public void onQuestionClicked(Question question) {
+//                onQuestionClicked(question);
+//            }
+//        });
         recyclerView.setAdapter(questionAdapter);
     }
 
@@ -84,7 +92,8 @@ implements QuestionListViewMVC {
         @Override
         public void onBindViewHolder(@NonNull QuestionHolder holder, int position) {
             holder.title.setText(questionList.get(position).getTitle());
-            holder.itemView.setOnClickListener(v -> {
+            holder.title.setOnClickListener(v -> {
+                Toast.makeText(v.getContext(), "You clicked the question:"+questionList.get(position).getQuestion_id(), Toast.LENGTH_SHORT).show();
                 mOnQuestionClickListener.onQuestionClicked(questionList.get(position));
             });
         }
